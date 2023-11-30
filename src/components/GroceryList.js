@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../GroceryList.css'; 
-
-// Mock data simulating items from a database
-const allItems = [
-  { id: 1, name: 'Apples', category: 'Produce', cost: 1.2 },
-  { id: 2, name: 'Bread', category: 'Bakery', cost: 2.5 },
-
-];
 
 const GroceryList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [groceryItems, setGroceryItems] = useState([]);
+  const [allItems, setAllItems] = useState([]); // Store all items from the database
+
+  // Fetch items from the server when the component mounts
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch('/api/items');
+        const data = await response.json();
+        setAllItems(data);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -46,18 +55,18 @@ const GroceryList = () => {
         onChange={handleSearchChange}
         className="search-box"
       />
-      <ul className="item-list">
+      <div className="item-list">
         {filteredItems.map((item) => (
-          <li key={item.id} className="item-tile">
+          <div key={item.id} className="item-tile">
             {item.name} - ${item.cost.toFixed(2)}
             <button onClick={() => addItemToList(item)} className="button">Add to List</button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       <h2>Your List</h2>
-      <ul className="grocery-list">
+      <div className="grocery-list">
         {groceryItems.map((item) => (
-          <li key={item.id} className={`list-tile ${item.purchased ? 'purchased' : ''}`}>
+          <div key={item.id} className={`list-tile ${item.purchased ? 'purchased' : ''}`}>
             {item.quantity} x {item.name} - ${item.cost.toFixed(2)}
             <div>
               <button onClick={() => markItemAsPurchased(item.id)} className="button">
@@ -65,9 +74,9 @@ const GroceryList = () => {
               </button>
               <button onClick={() => removeItemFromList(item.id)} className="button">Remove</button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
