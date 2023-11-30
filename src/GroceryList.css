@@ -1,5 +1,3 @@
-/* GroceryList.css */
-
 .grocery-list-page {
   display: flex;
   flex-direction: column;
@@ -7,18 +5,59 @@
 }
 
 .grocery-list-page h1 {
-  font-size: 3.5em; /* Larger font size for the title */
-  color: #1c3f75; /* Title color */
-  text-align: center; /* Center the title text */
-  margin-bottom: 20px; /* Space below the title */
+  font-size: 3.5em;
+  color: #1c3f75;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .search-box {
   padding: 10px 15px;
   border-radius: 15px;
   border: 1px solid #ccc;
-  min-width: 325px;
-  margin-bottom: 20px; /* Space below the search box */
+  min-width: 400px;
+  margin-bottom: 20px;
 }
 
-/* Add styles for your list and buttons as needed */
+.item-list, .grocery-list {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item-tile, .list-tile {
+  background: #f8f9fa;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button {
+  background-color: #306ECC;
+  color: white;
+  padding: 0.75em 1em;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bolder;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #8ca8d3;
+}
+
+.list-tile.purchased {
+  text-decoration: line-through;
+  background-color: #d3d3d3;
+}
+
