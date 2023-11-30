@@ -8,16 +8,16 @@ const AccountProfile = () => {
         memberSince: 'January 2021',
     });
 
-    // State to store the profile picture URL
-    const [profilePic, setProfilePic] = useState('/profilepic.jpg'); // Default image path
+    
+    const [profilePic, setProfilePic] = useState('/profilepic.jpg'); 
 
-    // Handler for profile picture upload
+    
     const handleProfilePictureUpload = (event) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                setProfilePic(e.target.result); // Update the state with the new image
+                setProfilePic(e.target.result); 
             };
             reader.readAsDataURL(file);
         }
