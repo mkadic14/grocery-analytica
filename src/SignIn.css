@@ -1,0 +1,130 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+   
+  .signin-app-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .signin-left-container, .signin-right-container {
+    flex: 1;
+  }
+  
+ 
+  .signin-left-container {
+    background-color: #306ECC;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .signin-container {
+    max-width: 400px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+ 
+  .signin-container h1 {
+    font-size: 4em;
+    text-align: center;
+    margin-bottom: 0.8em;
+    margin-top: -90px;
+    color: white;
+  }
+  
+  .signin-container p {
+    text-align: center;
+    margin-bottom: 1em;
+    color:white;
+    margin-top: -40px;
+  }
+  
+  .signin-input-container {
+    margin-bottom: 15px;
+  }
+  
+  .signin-input-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+  }
+  
+ 
+  .signin-options-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .signin-input-container label {
+    display: block;
+    color: white;
+    margin-left: 10px;
+  }
+  
+ 
+  .signin-login-button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1.2em;
+    background-color: #8ca8d3;
+    color: white;
+    border: none;
+  }
+  
+  
+  .signin-right-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    background-color: #fff;
+  }
+  
+  .signin-right-container img {
+    max-width: 80%;
+    height: auto;
+    display: block;
+  }
+  
+  .signin-container a {
+    color: white;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+  .signin-container a:hover {
+    text-decoration: none;
+  }
+  
+  .signin-right-container .brand-name {
+    color: #306ECC;
+    -webkit-text-stroke: 2px #2d5b9b;
+    text-stroke: 2px #1c3f75;
+    text-align: center;
+    font-size: 6em;
+    font-weight: bold;
+    margin-top: 10px;
+   
+  }
+  
+  
+  .signin-right-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+  
