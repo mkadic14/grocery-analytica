@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import '../GroceryList.css'; 
+import '../GroceryList.css';
 
 const GroceryList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [groceryItems, setGroceryItems] = useState([]);
-  const [allItems, setAllItems] = useState([]); // Store all items from the database
+  const [allItems, setAllItems] = useState([]);
 
-  // Fetch items from the server when the component mounts
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch('/api/items');
+        const response = await fetch('http://localhost:3001/api/items');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         setAllItems(data);
       } catch (error) {
@@ -27,16 +30,71 @@ const GroceryList = () => {
 
   const addItemToList = (item) => {
     setGroceryItems([...groceryItems, { ...item, quantity: 1, purchased: false }]);
+    saveItemToDatabase(item);
+  };
+
+  const updateItemInList = async (id, updatedItem) => {
+    setGroceryItems(groceryItems.map((item) => 
+      item.id === id ? { ...item, ...updatedItem } : item
+    ));
+
+   
+    try {
+      const response = await fetch(`http://localhost:3001/api/items/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedItem),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      console.log('Item updated:', await response.json());
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
   };
 
   const removeItemFromList = (id) => {
     setGroceryItems(groceryItems.filter((item) => item.id !== id));
+    deleteItemFromDatabase(id);
   };
 
-  const markItemAsPurchased = (id) => {
-    setGroceryItems(groceryItems.map((item) => 
-      item.id === id ? { ...item, purchased: !item.purchased } : item
-    ));
+  const saveItemToDatabase = async (item) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(item),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const savedItem = await response.json();
+      console.log('Item saved:', savedItem);
+    } catch (error) {
+      console.error('Error saving item:', error);
+    }
+  };
+
+  const deleteItemFromDatabase = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/items/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      console.log('Item deleted:', await response.json());
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
   const filteredItems = searchTerm
@@ -69,7 +127,7 @@ const GroceryList = () => {
           <div key={item.id} className={`list-tile ${item.purchased ? 'purchased' : ''}`}>
             {item.quantity} x {item.name} - ${item.cost.toFixed(2)}
             <div>
-              <button onClick={() => markItemAsPurchased(item.id)} className="button">
+              <button onClick={() => updateItemInList(item.id, { ...item, purchased: !item.purchased })} className="button">
                 {item.purchased ? 'Unmark' : 'Mark as Purchased'}
               </button>
               <button onClick={() => removeItemFromList(item.id)} className="button">Remove</button>

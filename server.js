@@ -19,7 +19,7 @@ const pool = new Pool({
 // GET Endpoint: Fetch items from the database
 app.get('/api/items', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM Product Table'); // Replace with your actual table name
+    const result = await pool.query('SELECT * FROM Product Table');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -27,15 +27,15 @@ app.get('/api/items', async (req, res) => {
   }
 });
 
-// POST Endpoint: Add a new item to the database
-app.post('/api/add-item', async (req, res) => {
-  const { name, category, cost } = req.body;
+
+app.post('/api/items', async (req, res) => {
+  const { name, cost, userEmail } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO your_table_name (name, category, cost) VALUES ($1, $2, $3) RETURNING *', 
-      [name, category, cost]
+      'INSERT INTO Product Table (name, cost, user_email) VALUES ($1, $2, $3) RETURNING *', 
+      [name, cost, userEmail]
     );
-    res.json(result.rows[0]);
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -43,14 +43,18 @@ app.post('/api/add-item', async (req, res) => {
 });
 
 // PUT Endpoint: Update an existing item in the database
-app.put('/api/update-item/:id', async (req, res) => {
+app.put('/api/items/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, category, cost } = req.body;
+  const { name, cost } = req.body;
+  const userEmail = 'grocery-analytica-test@gmail.com';
   try {
     const result = await pool.query(
-      'UPDATE your_table_name SET name = $1, category = $2, cost = $3 WHERE id = $4 RETURNING *', 
-      [name, category, cost, id]
+      'UPDATE Product Table SET name = $1, cost = $2 WHERE id = $3 AND user_email = $4 RETURNING *', 
+      [name, cost, id, userEmail]
     );
+    if (result.rows.length === 0) {
+      return res.status(404).send('Item not found or user not authorized.');
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -59,10 +63,11 @@ app.put('/api/update-item/:id', async (req, res) => {
 });
 
 // DELETE Endpoint: Delete an item from the database
-app.delete('/api/delete-item/:id', async (req, res) => {
+app.delete('/api/items/:id', async (req, res) => {
   const { id } = req.params;
+  const userEmail = 'grocery-analytica-test@gmail.com';
   try {
-    await pool.query('DELETE FROM your_table_name WHERE id = $1', [id]);
+    await pool.query('DELETE FROM your_table_name WHERE id = $1 AND user_email = $2', [id, userEmail]);
     res.json({ message: 'Item deleted successfully' });
   } catch (err) {
     console.error(err);
