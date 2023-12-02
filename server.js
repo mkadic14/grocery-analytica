@@ -27,7 +27,7 @@ app.get('/api/items', async (req, res) => {
   }
 });
 
-
+// POST Endpoint: Add a new item to the database
 app.post('/api/items', async (req, res) => {
   const { name, cost, userEmail } = req.body;
   try {
@@ -67,8 +67,46 @@ app.delete('/api/items/:id', async (req, res) => {
   const { id } = req.params;
   const userEmail = 'grocery-analytica-test@gmail.com';
   try {
-    await pool.query('DELETE FROM your_table_name WHERE id = $1 AND user_email = $2', [id, userEmail]);
+    await pool.query('DELETE FROM Product Table WHERE id = $1 AND user_email = $2', [id, userEmail]);
     res.json({ message: 'Item deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+// GET Endpoint: Fetch Top Products and their percentage change
+app.get('/api/top-products', async (req, res) => {
+  const userEmail = req.query.userEmail;
+
+  try {
+    const topProductsQuery = `
+      SELECT name, COUNT(*) AS purchase_count, SUM(cost) AS total_amount
+      FROM purchases
+      WHERE user_email = $1
+      GROUP BY name
+      ORDER BY purchase_count DESC
+      LIMIT 5;
+    `;
+
+    const topProducts = await pool.query(topProductsQuery, [userEmail]);
+
+    // For each top product, calculate the percent change in purchases
+    for (let product of topProducts.rows) {
+      const percentChangeQuery = `
+        SELECT
+          (COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)) -
+          COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1)) 
+          / NULLIF(COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1), 0) * 100
+          AS percent_change
+        FROM purchases
+        WHERE name = $1 AND user_email = $2;
+      `;
+      const percentChangeResult = await pool.query(percentChangeQuery, [product.name, userEmail]);
+      product.percent_change = percentChangeResult.rows[0]?.percent_change || 0;
+    }
+
+    res.json(topProducts.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

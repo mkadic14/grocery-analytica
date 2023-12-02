@@ -1,24 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../TopProducts.css';
 
-// Mock Data
-const products = [
-  { name: 'Strawberries', amount: 40.00, change: 5, icon: '🍓' },
-  { name: 'Milk', amount: 40.00, change: 5, icon: '🥛' },
-  { name: 'Bread', amount: 40.00, change: -5, icon: '🍞' },
-  { name: 'Chicken', amount: 40.00, change: +5, icon: '🍗' },
-  { name: 'Chips', amount: 40.00, change: -5, icon: '🍟' },
-
-];
-
 const TopProducts = () => {
+  const [topProducts, setTopProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchTopProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/top-products');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setTopProducts(data);
+      } catch (error) {
+        console.error('Error fetching top products:', error);
+      }
+    };
+
+    fetchTopProducts();
+  }, []);
+
   return (
     <div className="top-products-container">
       <h2>Top Products</h2>
       <ul>
-        {products.map((product) => (
+        {topProducts.map((product) => (
           <li key={product.name} className="product-item">
-            <span className="product-icon">{product.icon}</span>
             <span className="product-name">{product.name}</span>
             <span className="product-amount">${product.amount.toFixed(2)}</span>
             <span className={`product-change ${product.change >= 0 ? 'positive' : 'negative'}`}>
